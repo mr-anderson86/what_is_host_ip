@@ -1,11 +1,21 @@
 version: '3.8'
 services:
-  track_search:
-    container_name: host_ip
+  host_ip:
+    container_name: host-ip
     image: mranderson86/host-ip:1.0.0
     build:
       context: ./src
       args:
         - TAG=1.0.0
+
+  nginx:
+    container_name: nginx
+    image: mranderson86/mynginx:1.0.0
+    build:
+      context: ./nginx
+      args:
+        - TAG=1.0.0
     ports:
-      - 5000:5000
+      - 80:80
+    environment:
+      - BACKEND_URL=host-ip:5000
