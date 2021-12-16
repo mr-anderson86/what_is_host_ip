@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.host_ip.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: {{ .Values.host_ip.name }}
+spec:
+  replicas: {{ .Values.host_ip.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.host_ip.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.host_ip.name }}
+    spec:
+      containers:
+        - name: {{ .Values.host_ip.name }}
+          image: {{ .Values.host_ip.image }}:{{ .Values.host_ip.tag }}
+          ports:
+              - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.host_ip.name }}-service
+  namespace: {{ .Values.namespace.name }}
+spec:
+  selector:
+    app: {{ .Values.host_ip.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.host_ip.port }}
+      targetPort: 5000

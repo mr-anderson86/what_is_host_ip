@@ -1,0 +1,6 @@
+apiVersion: v2
+name: host-ip
+description: A Helm chart to deploy "what-is-host-ip" and nginx
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

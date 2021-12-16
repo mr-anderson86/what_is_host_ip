@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nginx.name }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    app: {{ .Values.nginx.name }}
+spec:
+  replicas: {{ .Values.nginx.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.nginx.name }}
+  template:
+    metadata:
+      annotations:
+        #This little guy will force redeployment in case of changes in the configmap,
+        #thus will reload variables from the configmap
+        #(example: adding new variable or changing the value of an existing variable in the configmap)
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app: {{ .Values.nginx.name }}
+    spec:
+      containers:
+        - name: {{ .Values.nginx.name }}
+          image: {{ .Values.nginx.image }}:{{ .Values.nginx.tag }}
+          ports:
+              - containerPort: 80
+          env:
+            - name: BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace.name }}-configmap
+                  key: backend_url
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nginx.name }}-service
+  namespace: {{ .Values.namespace.name }}
+spec:
+  selector:
+    app: {{ .Values.nginx.name }}
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: {{ .Values.nginx.port }}
+      targetPort: 80

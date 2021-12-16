@@ -10,6 +10,9 @@ Those applications can work on [Docker Compose](https://docs.docker.com/compose/
 (Created by mr-anderson86, started @12/2021)
 
 ## Prerequisites
+### For Docker Compose
+* Docker
+### For Kubernetes
 * minikube (or a kubernetes cluster)
 * helm
 
@@ -31,10 +34,14 @@ cd what_is_host_ip/kubernetes/helm
 # helm install [your app name] host-ip, example below:
 helm install host-ip host-ip
 
-# For minikube:
+# Only for minikube:
 minikube tunnel
 
-# If you are using an external k8s cluster, then you'll have to retrieve ip from ou
+# Note: in minikube also the 2 below commands can work instead of "minikube tunnel":
+# minikube service nginx-service --url -n my-host-ip  # but this will give you a different port than 80
+# kubectl -n my-host-ip port-forward --address 0.0.0.0 service/nginx-service 80:80
+
+# If you are using an external k8s cluster, then you'll have to retrieve ip from external LB
 ```
 
 That's it!  

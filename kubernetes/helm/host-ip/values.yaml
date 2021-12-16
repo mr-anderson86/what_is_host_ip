@@ -1,0 +1,16 @@
+namespace:
+  name: my-host-ip
+
+host_ip:
+  name: host-ip
+  replicas: 2
+  image: mranderson86/host-ip
+  tag: 1.0.0
+  port: 5000
+
+nginx:
+  name: nginx
+  replicas: 2
+  image: mranderson86/mynginx
+  tag: 1.0.0
+  port: 80
