@@ -9,6 +9,12 @@ This project contains 2 containers (Pods):
 Those applications can work on [Docker Compose](https://docs.docker.com/compose/), or on [Minikube](https://minikube.sigs.k8s.io/) / [Kubernetes](https://kubernetes.io/) (using [Helm](https://helm.sh/)) 
 (Created by mr-anderson86, started @12/2021)
 
+## Structure
+<img src="structure.png" alt="Infrastructure Design" width="500"/>
+
+[The app](src) and the [Nginx](nginx) are deployed within a closed namespace in Kubernetes (or Docker network), and the user can access only the Nginx.  
+(Meaning: the Nginx is used as a reversed proxy for the app, while the app is not exposed externally at all)
+
 ## Prerequisites
 ### For Docker Compose
 * Docker
